@@ -28,23 +28,54 @@ int main()
     ll t;
     cin >> t;
 
+    srand(time(0));
+
     while(t--)
     {
         ll n,m,k;
         cin >> n >> m >> k;
 
-        vector<ll> ans;
+        vector<ll> ans; 
+        vector<ll> exm[n+1];
 
         for(ll i=1 ; i<=n ; ++i)
         {
-            vector<ll> v(m+1);
             for(ll j=1,tmp ; j<=k ; ++j)
             {
                 cin >> tmp;
-                v[tmp]++;
+                exm[i].pb(tmp);
             }
-            auto it = max_element(v.begin(),v.end());
-            ans.pb( distance(v.begin(),it) );
+        }
+        
+        ll max = INT_MIN;
+
+        for(ll i=1 ; i<=300 ; ++i)
+        {
+            vector<ll> tmpans; 
+            for(ll j=1 ; j<=n ; ++j)
+            {
+                tmpans.pb( exm[j][rand()%k] );
+            }
+
+            ll min_score = INT_MAX;
+
+            for(ll x=1 ; x<=k ; ++x)
+            {
+                ll score=0;
+                for(ll y=1 ; y<=n ; ++y)
+                {
+                    if(tmpans[y-1] == exm[y][x-1]) score++;
+                }
+                min_score = min(score,min_score);
+            }
+
+            if(min_score > max) 
+            {
+                max = min_score;
+                ans.clear();
+                ans = tmpans;
+            }
+
         }
         
         for(auto x : ans) cout << x << " ";
