@@ -4,18 +4,25 @@ using namespace std;
 typedef long long ll;
 
 ll ans;
+vector<vector<int>> adj(10001);
+vector<bool> vis(10001,false);
+vector<ll> lvl(10001),sum(10001);
 
-void dfs(int idx, vector<vector<int>> &tree,vector<bool> &vis)
+void dfs(ll node, ll par)
 {
-    vis[idx]=true;
-    if(tree[idx].size()) ++ans;
-    for(int i=0 ; i<tree[idx].size() ; ++i)
+    vis[node]=true;
+    parent[node] = par ;
+    lvl[node] = lvl[par]+1;
+    sum[node] = 1;
+
+    for(auto x : adj[node])
     {
-        if(vis[tree[idx][i]]==false)
+        if(!vis[x] && x!=parent[node])
            {    
-              dfs(tree[idx][i],tree,vis); 
+              dfs(x,node);
+              sum[node] += sum[x]; 
            }
-    }
+    }    
 }
 
 int main()
@@ -27,8 +34,6 @@ int main()
     {
         ans=0;
         cin >> e;
-        vector<vector<int>> tree(10001);
-        vector<bool> vis(10001,false);
         
         for(int i=0 ; i<e ; ++i)
         {
