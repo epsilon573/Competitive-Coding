@@ -32,19 +32,19 @@ int main()
     // to calculate Shortest Prime Factor upto n once.
     // Log(n) to calculate prime factorisation for each query
 
-    vector<ll> sieve(10001,1);
+    vector<ll> sieve(maxn,1);
     ll t,req_fac; spf[1] = 1;
     sieve[0] = sieve[1] = 0;
     
     cin >> t;
     while(t--)
     {
-	    for(ll i = 2 ; i<10001 ; ++i)
+	    for(ll i = 2 ; i<maxn ; ++i)
 	    {
 	    	if(sieve[i])
 	        {
 	            spf[i] = i;
-	        	for(ll j=i*i ; j<10001 ; j+=i)
+	        	for(ll j=i*i ; j<maxn ; j+=i)
 	        	{	
 	                sieve[j] = 0;
 	                if(!spf[j]) spf[j] = i;
