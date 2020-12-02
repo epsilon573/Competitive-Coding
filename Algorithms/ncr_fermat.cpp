@@ -19,13 +19,13 @@ const ll minf = LLONG_MIN;
 #define endl "\n"
 #define deb(x) cerr << #x << " " << x << endl
 
-ll fac[1007];
+ll fac[maxn];
 
 void comp()
 {
     fac[0] = 1; 
     
-    for (ll i = 1; i <= 1005; i++) 
+    for (ll i = 1; i < maxn; i++) 
         fac[i] = (fac[i - 1] * i) % mod; 
 }
 
@@ -33,17 +33,15 @@ void comp()
 ll power(ll x, ll y, ll p = mod) 
 { 
     ll res = 1; 
-
     x = x % p; 
   
     while (y > 0) { 
-
         if (y & 1) 
             res = (res * x) % p; 
-   
         y = y >> 1; 
         x = (x * x) % p; 
     } 
+
     return res; 
 } 
 
@@ -56,9 +54,9 @@ ll modInverse(ll n, ll p = mod)
 
 ll NCR(ll n, ll r, ll p=mod) 
 { 
-    if( n <= r) return 0;
+    if( n < r ) return 0;
 
-    if (r == 0) 
+    if (r == 0 || r == n) 
         return 1; 
   
     return (fac[n] * modInverse(fac[r], p) % p * modInverse(fac[n - r], p) % p) % p; 

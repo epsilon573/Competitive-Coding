@@ -13,8 +13,26 @@ const db eps = 1e-9;
 
 #define deb(x) cout << #x << " " << x << endl
 
-vector<ll> factors[10001];
-ll spf[10001],v[10001];
+vector<ll> sieve(maxn,1),spf(maxn,0);
+
+void comp()
+{
+    spf[1] = 1;
+    sieve[0] = sieve[1] = 0;
+    for(ll i = 2 ; i<maxn ; ++i)
+    {
+        if(sieve[i])
+        {
+            spf[i] = i;
+            for(ll j=i*i ; j<maxn ; j+=i)
+            {   
+                sieve[j] = 0;
+                if(!spf[j]) spf[j] = i;
+            }   
+        }
+    }
+}
+
 
 int main()
 {
