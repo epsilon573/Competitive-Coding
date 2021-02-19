@@ -18,29 +18,68 @@ const ll minf = -inf ;
 #define pb push_back
 #define endl "\n"
 
+ll n;
+vector<ll> v,ans;
+
+void recur(ll h, ll d, ll s , ll e)
+{
+    if(s>e) return;
+    if(s==e)
+    {
+        ans[s] = d;
+        return;
+    }
+
+    ans[h] = d;
+    ll mx=-1, mxidx=-1;
+
+    for(ll i=s ; i<h ; ++i)
+    {
+        if(v[i]>mx)
+        {
+            mx = v[i];
+            mxidx = i;
+        }
+    }
+
+    if(s!=h)
+        recur(mxidx,d+1,s,h-1);
+
+    mx=-1, mxidx=-1;
+    for(ll i=h+1 ; i<=e ; ++i)
+    {
+        if(v[i]>mx)
+        {
+            mx = v[i];
+            mxidx = i;
+        }
+    }
+
+    if(h!=e)
+        recur(mxidx,d+1,h+1,e);
+
+    return;
+}
+
 bool solve()
 {
-    ll n;
     cin >> n;
-    vector<ll> x(n),y(n);
+    v.resize(n); 
+    ans.resize(n);
 
-    for(ll i=0 ; i<n ; ++i) cin >> x[i] >> y[i];
+    ll idx;
 
-    sort(x.begin(),x.end());
-    sort(y.begin(),y.end());
-
-    if(n&1)
+    for(ll i=0 ; i<n ; ++i)
     {
-        cout << 1 << endl;
+        cin >> v[i];
+        if(v[i]==n) idx = i;
     }
-    else
-    {
-        ll dx = abs(x[n/2]-x[n/2-1])+1;
-        ll dy = abs(y[n/2]-y[n/2-1])+1;
 
-        cout << dy*dx << endl;
-    }
-    
+    recur(idx,0,0,n-1);
+
+    for(auto x : ans) cout << x << " ";
+
+    cout << endl;
     return true;    
 }
 

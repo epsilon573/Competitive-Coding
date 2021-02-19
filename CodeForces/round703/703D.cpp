@@ -18,68 +18,82 @@ const ll minf = -inf ;
 #define pb push_back
 #define endl "\n"
 
-ll n;
-vector<ll> v,ans;
+ll n,k;
+vector<ll> v(n);
 
-void recur(ll h, ll d, ll s , ll e)
+bool check(ll mid)
 {
-    if(s>e) return;
-    if(s==e)
+    vector<ll> pref(n,inf),here(n),sum(n);
+
+    for(ll i=0 ; i<n ; ++i)
     {
-        ans[s] = d;
-        return;
+        if(v[i]>=mid) here[i]=1;
+        else here[i]=-1;
+
+        if(i) sum[i] = sum[i-1]+here[i];
+        else sum[i] = here[i];
+
+        if(i) pref[i] = min(pref[i-1],sum[i]);
+        else pref[i] = sum[i];
     }
 
-    ans[h] = d;
-    ll mx=-1, mxidx=-1;
-
-    for(ll i=s ; i<h ; ++i)
+    for(ll i=0 ; i<n ; ++i)
     {
-        if(v[i]>mx)
+        ll target = sum[i]-1, low = 0 , high = i, x , ans=-1;
+
+        while(low<=high)
         {
-            mx = v[i];
-            mxidx = i;
+            x = (low+high)/2;
+
+            if(pref[x]>target)
+            {
+                low = x+1;
+            }
+            else
+            {
+                ans = x;
+                high = x-1;
+            }
+        }
+
+        if( 0<=target && i>=k-1 )
+        {
+            return true;
+        }
+
+        if(ans!=-1 && i-ans>=k)
+        {
+            return true;
         }
     }
 
-    if(s!=h)
-        recur(mxidx,d+1,s,h-1);
-
-    mx=-1, mxidx=-1;
-    for(ll i=h+1 ; i<=e ; ++i)
-    {
-        if(v[i]>mx)
-        {
-            mx = v[i];
-            mxidx = i;
-        }
-    }
-
-    if(h!=e)
-        recur(mxidx,d+1,h+1,e);
-
-    return;
+    return false;
 }
 
 bool solve()
 {
-    cin >> n;
-    v.resize(n); 
-    ans.resize(n);
+    cin >> n >> k;
+    v.resize(n);
 
-    ll idx;
+    for(ll i=0 ; i<n ; ++i) cin >> v[i];
 
-    for(ll i=0 ; i<n ; ++i)
+    ll low = 1, high = n+1 , mid, ans = -1;
+
+    while(low<=high)
     {
-        cin >> v[i];
-        if(v[i]==n) idx = i;
+        mid = (low+high)/2;
+        if(check(mid))
+        {
+            low = mid+1;
+        }
+        else 
+        {
+            ans = mid;
+            high = mid-1;
+        }
     }
-
-    recur(idx,0,0,n-1);
-
-    for(auto x : ans) cout << x << " ";
-
-    cout << endl;
+    
+    cout << ans-1 << endl;
     return true;    
 }
 
@@ -96,7 +110,6 @@ int main()
     #endif
 
     ll t=1;
-    cin >> t;
 
     while(t--)
     {

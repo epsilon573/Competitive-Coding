@@ -18,29 +18,64 @@ const ll minf = -inf ;
 #define pb push_back
 #define endl "\n"
 
+ll n;
+
+ll query(ll l, ll r)
+{
+    l = max(1ll,l);
+    r = min(n,r);
+
+    cout << "? " << l << " " << r << endl;
+    cout.flush();
+
+    ll res;
+    cin >> res;
+
+    return res;
+}
+
 bool solve()
 {
-    ll n;
     cin >> n;
-    vector<ll> x(n),y(n);
+    
+    ll x = query(1,n),ans=-1;
 
-    for(ll i=0 ; i<n ; ++i) cin >> x[i] >> y[i];
-
-    sort(x.begin(),x.end());
-    sort(y.begin(),y.end());
-
-    if(n&1)
+    ll low = 1, high = n-1, mid, left , right;
+        
+    while(low<high)
     {
-        cout << 1 << endl;
+        mid = (low+high)/2;
+        ll q = query(x-mid, x+mid);
+
+        if(q==x)
+        {
+            high = mid;
+        }
+        else
+        {
+            low = mid+1;
+        }
+    }
+
+    if(x-low<1)
+        left=-1;
+    else
+        left = query(x-low,x);
+    if(x+low>n)
+        right=-1;
+    else
+        right = query(x,x+low);
+
+    if(left==x)
+    {
+        cout << "! " << x-low << endl; 
     }
     else
     {
-        ll dx = abs(x[n/2]-x[n/2-1])+1;
-        ll dy = abs(y[n/2]-y[n/2-1])+1;
+        cout << "! " << x+low << endl;
+    }    
 
-        cout << dy*dx << endl;
-    }
-    
+    cout.flush();
     return true;    
 }
 
@@ -57,7 +92,6 @@ int main()
     #endif
 
     ll t=1;
-    cin >> t;
 
     while(t--)
     {

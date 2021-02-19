@@ -20,22 +20,47 @@ const ll minf = -inf ;
 
 bool solve()
 {
-    ll n;
+    ll n,a=0,b=0,c=0,ans=0;
     cin >> n;
     vector<ll> v(n);
 
-    for(ll i=0 ; i<n ; ++i) cin >> v[i];
-
-    ll zero = 0;
-
-    for(ll i=0 ; i<n ; ++i)
-    {
-        zero += v[i];
-
-        if(zero<i*(i+1)/2) return false;
+    for(ll i=0 ; i<n ; ++i){
+     cin >> v[i];
+     if(v[i]%3==0) a++;
+     else if(v[i]%3==1) b++;
+     else c++;
     }
+
+    ll x = n/3;
+
+
+for(ll i=0 ; i<10 ; ++i)
+{
+    if(a<x)
+    {
+        ans += x-a;
+        c -= x-a;
+        a = x;
+
+    }
+    if(b<x)
+    {
+        ans += x-b;
+        a -= x-b;
+        b = x;
+
+    }
+    if(c<x)
+    {
+        ans += x-c;
+        b -= x-c;
+        c = x;
+
+    }
+}
+    cout << ans << endl;  
     
-    return true;
+    return true;    
 }
 
 int main()
@@ -57,11 +82,11 @@ int main()
     {
         if(solve())
         {
-            cout << "YES" << endl;
+            // do this;
         }
         else
         {
-            cout << "NO" << endl;
+            // do this;
         }
     }
 
