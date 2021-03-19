@@ -38,17 +38,12 @@ void factor()
     {
         ll tmp = i,ans=0,prev;
 
-        while(spf[tmp]!=1)
-        {
-            prev = spf[tmp];
-            tmp /= spf[tmp];
+        prev = spf[tmp];
+        tmp /= spf[tmp];
 
-            if(spf[tmp] == prev) ans += fac[tmp];
-            else ans += fac[tmp]+1;
-
-            break;  
-        }
-
+        if(spf[tmp] == prev) ans += fac[tmp];
+        else ans += fac[tmp]+1;
+    
         fac[i] = ans;
     }
 }
