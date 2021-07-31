@@ -1,110 +1,118 @@
-#include "bits/stdc++.h"
+// Author : Epsilon573
+// If it works, don't touch it.
+
+#include <bits/stdc++.h>
 using namespace std;
 
 typedef unsigned long long ull;
 typedef long long ll;
+typedef long double ld;
 
-#define mod 1000000007
-#define maxn 100001
+const ll mod  = 1e9+7;
+const ld eps  = 1e-9 ;
+const ll maxn = 2e6+5;
+const ll inf  = 5e18 ;
+const ll minf = -inf ;
 
-ll tree[4*maxn],arr[maxn],lazy[4*maxn];
+#define mp make_pair
+#define pb push_back
+#define endl "\n"
 
-// Update Lazy Leftovers if Required
+ll t[4*maxn],arr[maxn],lazy[4*maxn];
 
-ll push(ll node)
+ll merge(ll a, ll b)
 {
-  lazy[2*node] += lazy[node];
-  tree[2*node] += lazy[node];
-
-  lazy[2*node + 1] += lazy[node];
-  tree[2*node + 1] += lazy[node];
-
-  lazy[node] = 0;  
-
-  return 0;
+    return min(a,b);
 }
 
-// Build Segment Tree
-
-ll build(ll node, ll start, ll end)
-{
-    if(start==end) { tree[node] = arr[start]; return 0;}
-    else 
-    {
-        ll mid = (start+end)/2;
-        build(2*node, start , mid);
-        build(2*node+1, mid+1 , end); 
+void build(ll a[], ll v, ll tl, ll tr) {
+    if (tl == tr) {
+        t[v] = a[tl];
+    } else {
+        ll tm = (tl + tr) / 2;
+        build(a, v*2, tl, tm);
+        build(a, v*2+1, tm+1, tr);
+        t[v] = merge(t[v*2],t[v*2+1]);
     }
-    tree[node] = min(tree[2*node],tree[2*node+1]);
-    return 0;
 }
 
-// For Point Updates
-
-ll update(ll node, ll start, ll end, ll idx, ll val)
-{
-   if(start==end)
-   {
-   	   arr[idx] = val;
-   	   tree[node] = val;
-   	   return 0;
-   }
-   else
-   {
-       ll mid = (start+end)/2;
-       if(idx<=mid) update(2*node, start, mid, idx, val);
-       else update(2*node+1, mid+1, end, idx, val);
-   }
-    tree[node] = min(tree[2*node],tree[2*node+1]);
-    return 0;
-
+void push(ll v) {
+    t[v*2] += lazy[v];
+    lazy[v*2] += lazy[v];
+    t[v*2+1] += lazy[v];
+    lazy[v*2+1] += lazy[v];
+    lazy[v] = 0;
 }
 
-// For Range Updates
+void update(ll v, ll tl, ll tr, ll l, ll r, ll addend) {
+    if (l > r) 
+        return;
+    if (l == tl && tr == r) {
+        t[v] += addend;
+        lazy[v] += addend;
+    } else {
+        push(v);
+        ll tm = (tl + tr) / 2;
+        update(v*2, tl, tm, l, min(r, tm), addend);
+        update(v*2+1, tm+1, tr, max(l, tm+1), r, addend);
+        t[v] = merge(t[v*2], t[v*2+1]);
+    }
+}
 
-ll update_range(ll node, ll start, ll end, ll l , ll r, ll val)
+ll query(ll v, ll tl, ll tr, ll l, ll r) {
+    if (l > r)
+        return inf;
+    if (l <= tl && tr <= r)
+        return t[v];
+    push(v);
+    ll tm = (tl + tr) / 2;
+    return merge(query(v*2, tl, tm, l, min(r, tm)), 
+               query(v*2+1, tm+1, tr, max(l, tm+1), r));
+}
+
+bool solve()
 {
-   if(start==l && end==r)
-   {
-       lazy[node] += val;
-       tree[node] += val;
-   }
-   else
-   {
-       if(lazy[node]!=0) push(node);
-       ll mid = (start+end)/2;
-       
-       if( l>=start && r<=mid ) update_range(2*node, start, mid, l, r, val);
-       else if( l>mid && r<=end ) update_range(2*node+1, mid+1, end, l, r, val);
-       else 
-       {  
-          update_range(2*node , start , mid , l , mid , val);
-          update_range(2*node + 1, mid+1 , end, mid+1 , r , val);
-       }
+    ll n,m,ans=inf;
+    cin >> n >> m;
+    vector<ll> l(n),r(n);
+    vector<pair<ll,ll>> val;
 
-       tree[node] = max(tree[2*node],tree[2*node+1]);
-   }
+    build(arr,1,0,2*m);
+
+    for(ll i=0,x ; i<n ; ++i)
+    {
+        cin >> l[i] >> r[i] >> x;
+        l[i] *= 2;
+        r[i] *= 2;
+        val.pb({x,i});
+    }
+
+    sort(val.begin(),val.end());
     
-    return 0;
+    ll x=0, y=0;
+    update(1,0,2*m,l[val[0].second],r[val[0].second],1);
 
-}
-
-// For Range Query
-
-ll query(ll node, ll start, ll end, ll l , ll r)
-{
-    if(start == l && end == r) return tree[node];
-    else
+    while(y<n && x<=y)
     {
-      if(lazy[node]!=0) push(node);
+        ll q = query(1,0,2*m,2,2*m);
 
-    	ll mid = (start+end)/2;
-    	if(l>=start && r<=mid) return query(2*node,start,mid,l,r);
-    	else if(l>mid && r<=end) return query(2*node+1,mid+1,end,l,r);
-    	else return min(query(2*node,start,mid,l,mid),query(2*node+1,mid+1,end,mid+1,r));
+        if(q!=0)
+        {
+            ans = min(ans,val[y].first-val[x].first);
+            update(1,0,2*m,l[val[x].second],r[val[x].second],-1);
+            x++;
+        }
+        else
+        {
+            y++;
+            if(y<n)
+                update(1,0,2*m,l[val[y].second],r[val[y].second],1);
+        }
     }
 
-} 
+    cout << ans << endl;
+    return true;    
+}
 
 int main()
 {
@@ -112,32 +120,24 @@ int main()
     cin.tie(NULL);
     cout.tie(NULL);
 
-    #ifndef ONLINE_JUDGE
+    #ifdef EPSILON
     freopen("input.txt","r",stdin);
     freopen("output.txt","w",stdout);
     freopen("error.txt","w",stderr);
     #endif
 
-    ll t,n;
-    cin >> t;
+    ll t=1;
 
     while(t--)
     {
-        cin >> n;
-        for(ll i=0 ; i<n ; i++) cin >> arr[i];
-
-        memset(lazy , 0 , sizeof(lazy));
-        build(1,0,n-1);
-
-        cout << query(1,0,4,1,1) << endl;
-        cout << query(1,0,4,3,3) << endl;
-        cout << query(1,0,4,1,2) << endl;
-        cout << query(1,0,4,2,3) << endl;
-        cout << query(1,0,4,1,3) << endl;
-        cout << query(1,0,4,2,4) << endl;
-        cout << query(1,0,4,0,3) << endl;
-        cout << query(1,0,4,1,4) << endl;
-        cout << query(1,0,4,0,4) << endl;
+        if(solve())
+        {
+            // cout << "YES" << endl;
+        }
+        else
+        {
+            // cout << "NO" << endl;
+        }
     }
 
     return 0;
