@@ -1,0 +1,12 @@
+// Modular
+a % b = x
+if gcd(a,b)=k, then x is also a multiple of k
+
+if a' is a multiple of a,
+for various a' % b = k'
+k' = [ k, 2k, 3k .... until less than b]
+
+// General
+digital root of a number = num % 9 
+
+// 
