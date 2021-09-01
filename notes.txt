@@ -9,4 +9,5 @@ k' = [ k, 2k, 3k .... until less than b]
 // General
 digital root of a number = num % 9 
 
-// 
+Square root trick : Brute force for values <= sqrt(x)
+Some optimization for values >= sqrt(x) to have sqrt(x) iterations

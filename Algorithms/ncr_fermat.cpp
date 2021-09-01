@@ -19,47 +19,49 @@ const ll minf = LLONG_MIN;
 #define endl "\n"
 #define deb(x) cerr << #x << " " << x << endl
 
-ll fac[maxn];
+ll fac[maxn],invfact[maxn];
 
-void comp()
-{
-    fac[0] = 1; 
-    
-    for (ll i = 1; i < maxn; i++) 
-        fac[i] = (fac[i - 1] * i) % mod; 
-}
-
-
-ll power(ll x, ll y, ll p = mod) 
+ll power(ll x, ll y) 
 { 
     ll res = 1; 
-    x = x % p; 
+    x = x % mod; 
   
     while (y > 0) { 
         if (y & 1) 
-            res = (res * x) % p; 
+            res = (res * x) % mod; 
         y = y >> 1; 
-        x = (x * x) % p; 
+        x = (x * x) % mod; 
     } 
 
     return res; 
 } 
 
-
-ll modInverse(ll n, ll p = mod) 
+ll modInverse(ll n) 
 { 
-    return power(n, p - 2, p); 
+    return power(n, mod - 2); 
 } 
   
+void comp()
+{
+    fac[0] = 1, invfact[0] = 1; 
+    
+    for (ll i = 1; i < maxn; i++){ 
+        fac[i] = (fac[i - 1] * i) % mod;
+        invfact[i] = modInverse(fac[i]);
+    } 
+}
 
 ll NCR(ll n, ll r, ll p=mod) 
-{ 
+{
+    if(r < 0 || n < 0)
+        assert(false);
+
     if( n < r ) return 0;
 
     if (r == 0 || r == n) 
         return 1; 
-  
-    return (fac[n] * modInverse(fac[r], p) % p * modInverse(fac[n - r], p) % p) % p; 
+    
+    return ( fac[n] * invfact[r]  % mod) * invfact[n - r] % mod;  
 }
 
 bool solve()
