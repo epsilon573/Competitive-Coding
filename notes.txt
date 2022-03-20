@@ -6,6 +6,10 @@ if a' is a multiple of a,
 for various a' % b = k'
 k' = [ k, 2k, 3k .... until less than b]
 
+LCM doesn't follow mod property
+LCM(a,b,c) != LCM(LCM(a,b)%mod, c)
+Factorize and solve
+
 // General
 digital root of a number = num % 9 
 

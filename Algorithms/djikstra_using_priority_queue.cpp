@@ -18,6 +18,39 @@ const ll minf = -inf ;
 #define pb push_back
 #define endl "\n"
 
+vector<long long> djikstra(int n, vector<vector<pair<long long,long long>>>& adj, int src)
+{
+    vector<long long> vis(n,0), dis(n, 1e16);
+    
+    priority_queue <pair<long long,long long>, vector<pair<long long,long long>>, greater<pair<long long,long long>> > q;
+    dis[src] = 0;
+    q.push({0,src});
+    
+    while(!q.empty())
+    {
+        auto curr = q.top();
+        int node = curr.second;
+        long long wt = curr.first;
+
+        q.pop();
+
+        if(vis[node]) continue;
+
+        vis[node] = 1;
+        dis[node] = wt; 
+
+        for(auto x : adj[node])
+        {
+            int child = x.first;
+            long long wt_child = x.second;
+            
+            q.push({wt+wt_child,child});
+        }
+    }
+    
+    return dis;
+}
+
 bool solve()
 {
     ll n,m;
