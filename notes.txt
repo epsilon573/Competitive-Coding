@@ -10,6 +10,8 @@ LCM doesn't follow mod property
 LCM(a,b,c) != LCM(LCM(a,b)%mod, c)
 Factorize and solve
 
+A number N has ~ log(N) factors
+
 // General
 digital root of a number = num % 9 
 
